@@ -22,10 +22,7 @@ except IndexError:
     sys.exit(1)
 
 def quote(astring):
-    if astring.find("'") < 0:
-        return "'" + astring + "'"
-    else:
-        return '"' + astring + '"'
+    return f"'{astring}'" if astring.find("'") < 0 else f'"{astring}"'
 
 try:
     outfile = sys.argv[3]

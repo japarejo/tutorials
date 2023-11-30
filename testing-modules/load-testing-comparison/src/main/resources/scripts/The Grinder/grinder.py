@@ -7,11 +7,7 @@ from HTTPClient import NVPair
 def parseJsonString(json, element):
   for x in json.split(","):
     pc = x.replace('"','').split(":")
-    if pc[0].replace("{","") == element:
-      ele = pc[1].replace("}","")
-      return ele
-    else:
-      return ""
+    return pc[1].replace("}","") if pc[0].replace("{","") == element else ""
 
 test1 = Test(1, "Request resource")
 request1 = HTTPRequest()
@@ -24,17 +20,17 @@ random=java.util.Random()
 
 class TestRunner:
     def __call__(self):
-        customerId = str(random.nextInt());
+      customerId = str(random.nextInt());
 
-        result = request1.POST("http://localhost:8080/transactions/add", "{"'"customerRewardsId"'":null,"'"customerId"'":"+ customerId + ","'"transactionDate"'":null}")
-        txnId = parseJsonString(result.getText(), "id")
+      result = request1.POST("http://localhost:8080/transactions/add", "{"'"customerRewardsId"'":null,"'"customerId"'":"+ customerId + ","'"transactionDate"'":null}")
+      txnId = parseJsonString(result.getText(), "id")
 
-        result = request1.GET("http://localhost:8080/rewards/find/"+ customerId)
+      result = request1.GET(f"http://localhost:8080/rewards/find/{customerId}")
+      rwdId = parseJsonString(result.getText(), "id")
+
+      if rwdId == "":
+        result = request1.POST("http://localhost:8080/rewards/add", "{"'"customerId"'":"+ customerId + "}")
         rwdId = parseJsonString(result.getText(), "id")
 
-        if rwdId == "":
-          result = request1.POST("http://localhost:8080/rewards/add", "{"'"customerId"'":"+ customerId + "}")
-          rwdId = parseJsonString(result.getText(), "id")
-
-        result = request1.POST("http://localhost:8080/transactions/add", "{"'"id"'":" + txnId + ","'"customerRewardsId"'":" + rwdId + ","'"customerId"'":"+ customerId + ","'"transactionDate"'":null}")
-        result = request1.GET("http://localhost:8080/transactions/findAll/" + rwdId)
+      result = request1.POST("http://localhost:8080/transactions/add", "{"'"id"'":" + txnId + ","'"customerRewardsId"'":" + rwdId + ","'"customerId"'":"+ customerId + ","'"transactionDate"'":null}")
+      result = request1.GET(f"http://localhost:8080/transactions/findAll/{rwdId}")

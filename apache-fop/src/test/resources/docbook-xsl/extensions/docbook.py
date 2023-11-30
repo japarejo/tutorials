@@ -203,7 +203,7 @@ def correctRoundingError(floatWidths):
 
 def lookupVariable(tctxt, varName, default):
     varString = tctxt.variableLookup(varName, None)
-    if varString == None:
+    if varString is None:
         return default
 
     # If it's a list, get the first element
